@@ -10,4 +10,4 @@ Le multithreading est possible car le traitement d'une image ne nécessite pas l
 Il est donc possible de traiter toutes les images en parallèle et gagner en temps de traitement
 
 Voici les résultats de benchmark effectué avec 200 images jpg
-![Alt text](perf_screen.png)
+![Alt text](perf_screen2.png)
