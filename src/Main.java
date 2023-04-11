@@ -17,9 +17,15 @@ public class Main {
         System.out.println("MultiThread : "+ resultMultiThread.toString());
 
         double reduction = calculateDurationDifference(resultSingleThread, resultMultiThread);
-        System.out.printf("Le MultiThread réduits le temps de %s", reduction);
+        System.out.printf("Le MultiThread réduits le temps de %s pourcents", reduction);
     }
 
+    /**
+     * La méthode calculateDurationDifference calcule la différence entre deux durées en millisecondes et retourne le pourcentage de réduction du temps en mode multi-thread par rapport au temps en mode mono-thread.
+     * @param duration1 la durée en mode mono-thread
+     * @param duration2 la durée en mode multi-thread
+     * @return le pourcentage de réduction du temps en mode multi-thread par rapport au temps en mode mono-thread
+     */
     public static double calculateDurationDifference(Duration duration1, Duration duration2) {
         // Calculate the difference between the two durations
         Duration difference = duration1.minus(duration2);

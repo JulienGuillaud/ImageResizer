@@ -7,12 +7,17 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
-import java.util.regex.*;
 
 public class Resizer {
-    private String path;
-    private String[] fileExtension;
-    private File[] files;
+    private String path; // le chemin du dossier contenant les images à redimensionner
+    private String[] fileExtension; // les extensions de fichiers à redimensionner
+    private File[] files; // les fichiers à redimensionner
+
+    /**
+     * Constructeur de la classe Resizer.
+     * @param path Le chemin du dossier contenant les images à redimensionner.
+     * @param fileExtension Les extensions de fichiers à redimensionner.
+     */
     public Resizer(String path, String[] fileExtension) {
         this.path = path;
         this.fileExtension = fileExtension;
@@ -35,6 +40,10 @@ public class Resizer {
         this.files = f.listFiles(filter);
     }
 
+    /**
+     * Méthode qui redimensionne une image.
+     * @param file Le fichier représentant l'image à redimensionner.
+     */
     private void resize(File file){
         try {
             BufferedImage image = ImageIO.read(file);
@@ -48,6 +57,10 @@ public class Resizer {
         }
     }
 
+    /**
+     * Méthode qui redimensionne les images dans le thread principal.
+     * @return La durée de l'opération de redimensionnement.
+     */
     public Duration singleThreadResize() {
         this.createDir("singleThread");
         Instant start = Instant.now();
@@ -58,6 +71,11 @@ public class Resizer {
         this.removeDir("singleThread");
         return Duration.between(start, end);
     }
+
+    /**
+     * Méthode qui redimensionne les images en utilisant plusieurs threads.
+     * @return La durée de l'opération de redimensionnement.
+     */
     public Duration multiThreadResize() {
         this.createDir("multiThread");
         Instant start = Instant.now();
@@ -71,6 +89,10 @@ public class Resizer {
         return Duration.between(start, end);
     }
 
+    /**
+     * Méthode qui crée un dossier.
+     * @param dirName Le nom du dossier à créer.
+     */
     private void createDir(String dirName){
         File theDir = new File(this.path+"\\"+dirName);
         System.out.println("Create dir : " + theDir.getAbsolutePath());
@@ -79,6 +101,10 @@ public class Resizer {
         }
     }
 
+    /**
+     * Méthode qui supprime un dossier.
+     * @param dirName Le nom du dossier à supprimer.
+     */
     private void removeDir(String dirName){
         File theDir = new File(this.path+"\\"+dirName);
         System.out.println("Remove dir : " + theDir.getAbsolutePath());
