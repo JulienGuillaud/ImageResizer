@@ -14,9 +14,6 @@ public class Resizer {
     private String[] fileExtension;
     private File[] files;
     public Resizer(String path, String[] fileExtension) {
-        //if(path == null) throw new IllegalArgumentException("Path cannot be null");
-        //if(fileExtension == null) throw new IllegalArgumentException("File extension cannot be null");
-
         this.path = path;
         this.fileExtension = fileExtension;
 
@@ -36,10 +33,6 @@ public class Resizer {
         };
 
         this.files = f.listFiles(filter);
-//        for (int i = 0; i < this.files.length; i++) {
-//            System.out.println(this.files[i].getName());
-//        }
-
     }
     public void resize() {
         Instant start = Instant.now();
@@ -57,7 +50,6 @@ public class Resizer {
         }
         Instant end = Instant.now();
         printDuration("Single thread : ", start, end);
-//        System.out.println(Duration.between(start, end)); // prints PT1M3.553S
     }
     public void resizeMultiThread() {
         Instant start = Instant.now();
@@ -79,7 +71,6 @@ public class Resizer {
 
         Instant end = Instant.now();
         printDuration("Multi thread : ", start, end);
-//        System.out.println(Duration.between(start, end)); // prints PT1M3.553S
     }
     private void printDuration(String context, Instant start, Instant end) {
         String input = String.valueOf(Duration.between(start, end));
