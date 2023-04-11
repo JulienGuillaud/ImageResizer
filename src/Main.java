@@ -9,43 +9,22 @@ public class Main {
         System.out.printf("Start \n");
         String[] filesTypes = {".jpg", ".png"};
         Resizer resizer = new Resizer("C:\\Users\\jgu\\OneDrive\\Images\\perfTest", filesTypes);
-        String resultSingleThread = resizer.singleThreadResize();
-        String resultMultiThread = resizer.multiThreadResize();
+        Duration resultSingleThread = resizer.singleThreadResize();
+        Duration resultMultiThread = resizer.multiThreadResize();
 
-        printDuration("SingleThread : ", resultSingleThread);
-        printDuration("MultiThread : ", resultMultiThread);
 
-        calculateDurationDifference(resultSingleThread, resultMultiThread);
+        System.out.println("SingleThread : "+ resultSingleThread.toString());
+        System.out.println("MultiThread : "+ resultMultiThread.toString());
+
+        double reduction = calculateDurationDifference(resultSingleThread, resultMultiThread);
+        System.out.printf("Le MultiThread réduits le temps de %s", reduction);
     }
 
-    // Méthode pour afficher la durée d'exécution de la méthode de redimensionnement
-    public static void printDuration(String context,String duration) {
-        String regex = "^PT(\\d+\\.\\d+)S$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(duration);
+    public static double calculateDurationDifference(Duration duration1, Duration duration2) {
+        // Calculate the difference between the two durations
+        Duration difference = duration1.minus(duration2);
 
-        if (matcher.matches()) {
-            double time = Double.parseDouble(matcher.group(1));
-            String output = String.format("Time: %,.7fs", time).replace(',', '.');
-            System.out.println(context+output);
-        } else {
-            System.out.println("Invalid duration string.");
-        }
-    }
-
-    public static void calculateDurationDifference(String bigDuration, String smallDuration) {
-        // Parse the big and small durations into seconds
-        double bigSeconds = Double.parseDouble(bigDuration.substring(2, bigDuration.length() - 1));
-        double smallSeconds = Double.parseDouble(smallDuration.substring(2, smallDuration.length() - 1));
-
-        // Calculate the difference in seconds
-        double difference = bigSeconds - smallSeconds;
-
-        // Calculate the percentage reduction
-        double percentageReduction = (difference / bigSeconds) * 100;
-
-        // Print the results
-        System.out.printf("Duration difference: %.7f seconds\n", difference);
-        System.out.printf("Percentage reduction: %.2f%%\n", percentageReduction);
+        // Return the percentage reduction as a double value
+        return (double) difference.toMillis() / duration1.toMillis() * 100.0;
     }
 }

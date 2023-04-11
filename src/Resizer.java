@@ -34,51 +34,46 @@ public class Resizer {
 
         this.files = f.listFiles(filter);
     }
-    public String singleThreadResize() {
-        createDir("singleThread");
+
+    private void resize(File file){
+        try {
+            BufferedImage image = ImageIO.read(file);
+            BufferedImage resizedImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = resizedImage.createGraphics();
+            g.drawImage(image, 0, 0, 100, 100, null);
+            g.dispose();
+            ImageIO.write(resizedImage, "jpg", new File(path+"\\singleThread\\" + file.getName()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Duration singleThreadResize() {
+        this.createDir("singleThread");
         Instant start = Instant.now();
         for (File file : this.files) {
-            try {
-                BufferedImage image = ImageIO.read(file);
-                BufferedImage resizedImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-                Graphics2D g = resizedImage.createGraphics();
-                g.drawImage(image, 0, 0, 100, 100, null);
-                g.dispose();
-                ImageIO.write(resizedImage, "jpg", new File(path+"\\singleThread\\" + file.getName()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            resize(file);
         }
         Instant end = Instant.now();
-        removeDir("singleThread");
-        return String.valueOf(Duration.between(start, end));
+        this.removeDir("singleThread");
+        return Duration.between(start, end);
     }
-    public String multiThreadResize() {
-        createDir("multiThread");
+    public Duration multiThreadResize() {
+        this.createDir("multiThread");
         Instant start = Instant.now();
 
         List<File> filesList = List.of(this.files);
 
-        filesList.parallelStream().forEach(file -> {
-            try {
-                BufferedImage image = ImageIO.read(file);
-                BufferedImage resizedImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-                Graphics2D g = resizedImage.createGraphics();
-                g.drawImage(image, 0, 0, 100, 100, null);
-                g.dispose();
-                ImageIO.write(resizedImage, "jpg", new File(path+"\\multiThread\\" + file.getName()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        filesList.parallelStream().forEach(this::resize);
 
         Instant end = Instant.now();
-        removeDir("multiThread");
-        return String.valueOf(Duration.between(start, end));
+        this.removeDir("multiThread");
+        return Duration.between(start, end);
     }
 
     private void createDir(String dirName){
         File theDir = new File(this.path+"\\"+dirName);
+        System.out.println("Create dir : " + theDir.getAbsolutePath());
         if (!theDir.exists()){
             theDir.mkdirs();
         }
@@ -86,6 +81,7 @@ public class Resizer {
 
     private void removeDir(String dirName){
         File theDir = new File(this.path+"\\"+dirName);
+        System.out.println("Remove dir : " + theDir.getAbsolutePath());
         if (theDir.exists()){
             theDir.delete();
         }
