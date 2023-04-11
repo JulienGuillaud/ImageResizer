@@ -34,7 +34,8 @@ public class Resizer {
 
         this.files = f.listFiles(filter);
     }
-    public void resize() {
+    public String singleThreadResize() {
+        createDir("singleThread");
         Instant start = Instant.now();
         for (File file : this.files) {
             try {
@@ -43,15 +44,17 @@ public class Resizer {
                 Graphics2D g = resizedImage.createGraphics();
                 g.drawImage(image, 0, 0, 100, 100, null);
                 g.dispose();
-                ImageIO.write(resizedImage, "jpg", new File(path+"\\resized\\" + file.getName()));
+                ImageIO.write(resizedImage, "jpg", new File(path+"\\singleThread\\" + file.getName()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         Instant end = Instant.now();
-        printDuration("Single thread : ", start, end);
+        removeDir("singleThread");
+        return String.valueOf(Duration.between(start, end));
     }
-    public void resizeMultiThread() {
+    public String multiThreadResize() {
+        createDir("multiThread");
         Instant start = Instant.now();
 
         List<File> filesList = List.of(this.files);
@@ -63,27 +66,28 @@ public class Resizer {
                 Graphics2D g = resizedImage.createGraphics();
                 g.drawImage(image, 0, 0, 100, 100, null);
                 g.dispose();
-                ImageIO.write(resizedImage, "jpg", new File(path+"\\resizedMultiThread\\" + file.getName()));
+                ImageIO.write(resizedImage, "jpg", new File(path+"\\multiThread\\" + file.getName()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
 
         Instant end = Instant.now();
-        printDuration("Multi thread : ", start, end);
+        removeDir("multiThread");
+        return String.valueOf(Duration.between(start, end));
     }
-    private void printDuration(String context, Instant start, Instant end) {
-        String input = String.valueOf(Duration.between(start, end));
-        String regex = "^PT(\\d+\\.\\d+)S$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(input);
 
-        if (matcher.matches()) {
-            double time = Double.parseDouble(matcher.group(1));
-            String output = String.format("Time: %,.7fs", time).replace(',', '.');
-            System.out.println(context+output);
-        } else {
-            System.out.println("Invalid input string.");
+    private void createDir(String dirName){
+        File theDir = new File(this.path+"\\"+dirName);
+        if (!theDir.exists()){
+            theDir.mkdirs();
+        }
+    }
+
+    private void removeDir(String dirName){
+        File theDir = new File(this.path+"\\"+dirName);
+        if (theDir.exists()){
+            theDir.delete();
         }
     }
 }
