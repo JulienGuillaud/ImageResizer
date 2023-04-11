@@ -1,6 +1,7 @@
 import java.io.File;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,8 +14,8 @@ public class Main {
         Duration resultMultiThread = resizer.multiThreadResize();
 
 
-        System.out.println("SingleThread : "+ resultSingleThread.toString());
-        System.out.println("MultiThread : "+ resultMultiThread.toString());
+        System.out.println("SingleThread : "+ formatDuration(resultSingleThread.toMillis()));
+        System.out.println("MultiThread : "+ formatDuration(resultMultiThread.toMillis()));
 
         double reduction = calculateDurationDifference(resultSingleThread, resultMultiThread);
         System.out.printf("Le MultiThread réduits le temps de %s pourcents", reduction);
@@ -32,5 +33,21 @@ public class Main {
 
         // Return the percentage reduction as a double value
         return (double) difference.toMillis() / duration1.toMillis() * 100.0;
+    }
+
+    /**
+     * La méthode formatDuration prend en paramètre une durée en millisecondes et retourne une chaîne de caractères formatée.
+     * @param millis la durée en millisecondes
+     * @return une chaîne de caractères formatée
+     */
+    public static String formatDuration(long millis) {
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(minutes);
+        long milliseconds = millis - TimeUnit.MINUTES.toMillis(minutes) - TimeUnit.SECONDS.toMillis(seconds);
+        if(minutes == 0){
+            return String.format("%d.%03ds", seconds, milliseconds);
+        }else{
+            return String.format("%dmin %d.%03ds", minutes, seconds, milliseconds);
+        }
     }
 }
