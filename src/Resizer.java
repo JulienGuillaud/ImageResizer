@@ -44,14 +44,14 @@ public class Resizer {
      * Méthode qui redimensionne une image.
      * @param file Le fichier représentant l'image à redimensionner.
      */
-    private void resize(File file){
+    private void resize(String directory, File file){
         try {
             BufferedImage image = ImageIO.read(file);
             BufferedImage resizedImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
             Graphics2D g = resizedImage.createGraphics();
             g.drawImage(image, 0, 0, 100, 100, null);
             g.dispose();
-            ImageIO.write(resizedImage, "jpg", new File(path+"\\singleThread\\" + file.getName()));
+            ImageIO.write(resizedImage, "jpg", new File(path+"\\"+directory+"\\" + file.getName()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -65,7 +65,7 @@ public class Resizer {
         this.createDir("singleThread");
         Instant start = Instant.now();
         for (File file : this.files) {
-            resize(file);
+            resize("singleThread", file);
         }
         Instant end = Instant.now();
         this.removeDir("singleThread");
@@ -82,7 +82,7 @@ public class Resizer {
 
         List<File> filesList = List.of(this.files);
 
-        filesList.parallelStream().forEach(this::resize);
+        filesList.parallelStream().forEach(file -> resize("multiThread",file));
 
         Instant end = Instant.now();
         this.removeDir("multiThread");
@@ -106,10 +106,10 @@ public class Resizer {
      * @param dirName Le nom du dossier à supprimer.
      */
     private void removeDir(String dirName){
-        File theDir = new File(this.path+"\\"+dirName);
-        System.out.println("Remove dir : " + theDir.getAbsolutePath());
-        if (theDir.exists()){
-            theDir.delete();
-        }
+//        File theDir = new File(this.path+"\\"+dirName);
+//        System.out.println("Remove dir : " + theDir.getAbsolutePath());
+//        if (theDir.exists()){
+//            theDir.delete();
+//        }
     }
 }
